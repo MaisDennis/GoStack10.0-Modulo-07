@@ -165,8 +165,94 @@ ___
         1. vide ACTION
         2. Criar State Subscription: Cart
 
-12. Cart/index.js
-    1.  Tirar o export default do class e add a ultima linha: export default **connect(mapStateToProps)(Cart);**
-    2.  add mapsStateToProps (snip-it). A partir desse momento, o Cart() ja tem acesso a { cart }.
-    3.  cortar tr entre tbody e colar entre  {cart.map(product => () )}.
-    4.  Header/index.js: Add Link to="/cart" em volta do Cart.
+12.
+    1.  Cart/index.js
+        1.  Tirar o export default do class e add a ultima linha: export default **connect(mapStateToProps)(Cart);**
+        2.  add mapsStateToProps (snip-it). A partir desse momento, o Cart() ja tem acesso a { cart }.
+        3.  cortar tr entre tbody e colar entre  {cart.map(product => () )}.
+    2.  cart/reducer.js: adicionar produto como objeto com amount: {...action.product, amount: 1,},
+    3.  add product.amount
+
+13. Produto Duplicado
+    1. Até agora, ao adicionar o produto novamente, ele está sendo listado 2 vezes,
+    2. immer: lidar com objects e arrays imutaveis.
+        1. Cria Draft e usa ToDos.
+        2. cria flexibilidade para alterar states.
+        3. Google -> immerjs: https://github.com/immerjs/immer
+        ```
+        yarn add immer
+        ```
+        4.  cart/reducer.js
+            1. import produce from 'immer';
+            2. refazer return add produce(), incluir if(productIndex == duplicado).
+            3. eslint error: incluir regra: 'no-param-reassign': 'off',
+
+14. Remover produto
+    1. Cart/index.js: Adicionar o paramentro dispath no Cart(), prop onClick no button de delete item.
+    2. cart/reducer.js: adicionar o case 'REMOVE_FROM_CART':
+
+15. Refatorando as actions
+    1.  Criar 1 arquivo para cada **action**
+    2.  criar o arquivo cart/actions.js
+        1.  copiar oq ta dentro do dispatch no Home/index.js e criar export function addToCart()
+        2.  idem para removeFromCart
+    3.  Home/index.js: import * as CartActions from '../../store/modules/cart/actions';
+        1.  o * da acesso a CartActions.addToCart e CartActions.removeFromCart
+        2.  dispatch(CartActions.addToCart(product));
+    4.  import **{ bindActionCreators }** from 'redux';
+        1.  nova função **mapDispatchToProps** (com snip-it da Rocketseat)
+        2.  converte actions do redux em componentes.
+        3.  add ao: export default connect(null, mapDispatchToProps)(Home);
+        4.  ```Javascript
+            handleAddProduct = product => {
+              const { addToCart } = this.props;
+              addToCart(product);
+            ```
+        5.  idem para Cart/index.js
+            ...
+            ```Javascript
+            function Cart({ cart, removeFromCart }) {
+
+            <button type="button">
+              <MdDelete
+                size={20}
+                color="#7159c1"
+                onClick={() => removeFromCart(product.id)}
+              />
+            </button>
+            ```
+        6.  Refatorando actions deixa elas reutilizavel.
+    5.  No Reactotron, é bom saber qual modulo a action está disparando.
+        1.  cart/actions.js
+            1. type: '@cart/ADD',  type: '@cart/REMOVE',
+        2.  cart/reducer.js
+            1. case '@cart/ADD': case '@cart/REMOVE':
+
+16. Alterando a Quantidade
+    1.  cart/actions.js
+        1. Criar export function updateAmount(id, amount)
+    2.  Cart/index.js
+        1.  Criar functions (+) increment(product) e (-) decrement(product).
+    3.  cart/reducer.js
+        1.   case '@cart/UPDATE_AMOUNT':
+    4.  obs. o reducer é responsavel por todas as regras de utilidade (ex. amount < 0). Não é responsabilidade da interface.
+
+17. Calculando totais
+    1.  Os cálculos, não ocorrerão no reducer, nem no render, e sim no **mapStateToProps**.
+    2.  Cart/index.js
+          1.  import { formatPrice } from '../../util/format';
+          2.  mapStateToProps: o cart pode ser retornado do jeito que quiser. cart: state.cart.map()
+          3.  Calculando subtotal:
+              1.  Adicionar ao strong com subtotal.
+              2.  Calculo só vai executar quando alguma informação do reducer atualizar.
+          4. Calculando Total:
+              1.  mapsStateToProps: total: state.cart.reduce((total, product).
+                  1. **reduce**: 1 unico valor para todo array.
+              2.  total: formatPrice(...)
+
+18. Exibindo quantidades
+    1.  Home/index.js
+        1.  Criar um **mapStateToProps**, return amount.
+        2.  Add amount ao carrinho. MdAddShoppingCart: {amount[product.id] || '-'}
+
+
