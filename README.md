@@ -2,7 +2,8 @@
 1. Iniciar um projeto React Native para mobile app.
 2. Utilização de ambiente Android.
 3. Incluir ESLint, Prettier & EditorConfig.
-4. debug via Reactotron.
+
+4. Redux.
 5. Navegação entre páginas: React Navigation.
 6. Estilização via Styled Components.
 7. Acessando dados de API do Github.
@@ -165,10 +166,10 @@ ___
         1. vide ACTION
         2. Criar State Subscription: Cart
 
-12.
+12. Listando no carrinho
     1.  Cart/index.js
         1.  Tirar o export default do class e add a ultima linha: export default **connect(mapStateToProps)(Cart);**
-        2.  add mapsStateToProps (snip-it). A partir desse momento, o Cart() ja tem acesso a { cart }.
+        2.  add mapsStateToProps (snip-it). A partir desse momento, o **Cart() ja tem acesso a { cart }**.
         3.  cortar tr entre tbody e colar entre  {cart.map(product => () )}.
     2.  cart/reducer.js: adicionar produto como objeto com amount: {...action.product, amount: 1,},
     3.  add product.amount
@@ -184,11 +185,11 @@ ___
         ```
         4.  cart/reducer.js
             1. import produce from 'immer';
-            2. refazer return add produce(), incluir if(productIndex == duplicado).
+            2. refazer **ADD** return produce(), incluir if(productIndex == duplicado).
             3. eslint error: incluir regra: 'no-param-reassign': 'off',
 
 14. Remover produto
-    1. Cart/index.js: Adicionar o paramentro dispath no Cart(), prop onClick no button de delete item.
+    1. Cart/index.js: Adicionar o parametro dispath no Cart(), prop onClick no button de delete item.
     2. cart/reducer.js: adicionar o case 'REMOVE_FROM_CART':
 
 15. Refatorando as actions
@@ -222,7 +223,7 @@ ___
             </button>
             ```
         6.  Refatorando actions deixa elas reutilizavel.
-    5.  No Reactotron, é bom saber qual modulo a action está disparando.
+    5.  No Reactotron, é bom saber qual modulo a action está disparando, portanto nomear actions:
         1.  cart/actions.js
             1. type: '@cart/ADD',  type: '@cart/REMOVE',
         2.  cart/reducer.js
@@ -254,5 +255,83 @@ ___
     1.  Home/index.js
         1.  Criar um **mapStateToProps**, return amount.
         2.  Add amount ao carrinho. MdAddShoppingCart: {amount[product.id] || '-'}
+
+19. Configurando Redux **Saga** (Segue o roteiro abaixo, não tem jeito :/ )
+    1.  Sagas: Middlewares dentro do Redux. (interceptors p/actions).
+        1.  toda vez que disparar uma action, um middleware pode ser acionada para fazer algum efeito colateral = sideEffect.
+        2.  Vamos buscar otras infos do produto ao adicionar ao carrinho.
+        3.  ```
+            yarn add redux-saga
+            ```
+    2.  Criar modules/cart/sagas.js
+        1.  * = generator (como se fosse uma async)
+            ```
+            function* addToCart(action) {}
+            ```
+        2. Trocar o parametro addToCart(product -> id) em actions.js
+        3.  Home/index.js: puxar somente o id.
+            ```Javascript
+            <button
+              type="button"
+              onClick={() => this.handleAddProduct(product.id)}
+            >
+
+            handleAddProduct = id => {
+              const { addToCart } = this.props;
+              addToCart(id);
+            ```
+        4.  sagas.js: import **call**
+            ```Javascript
+            import { call } from 'redux-saga/effects';
+            import api from '../../../services/api';
+            function* addToCart({ id }) {
+              const response = yield call(api.get, `/products/${id}`);
+            }
+            ```
+        5.  actions.js
+            1. Separar addToCart em **addToCartRequest e addToCartSuccess**
+                1.  obs. request é ouvido apenas pelo saga (e não pelo reducer).
+                2.  saga finaliza a chamada API e tem dados do produto, chama a Success.
+                3.  Success é recebida pelo reducer (É como um passo a mais).
+        6.  cart/reducer.js
+            1. alterar: case '@cart/ADD_SUCCESS':
+        7.  Home/index.js:  alterar const { addToCartRequest } = this.props;
+        8.  sagas.js:
+            1.  import **put**. put dispara uma action no redux
+            2.  import { addToCartSuccess } from './actions';
+            3.  yield put(addToCartSuccess(response.data));
+            4.  ```Javascript
+                import { call, put, all, takeLatest } from 'redux-saga/effects';
+
+                export default all([takeLatest('@cart/ADD_REQUEST', addToCart)]);
+                ```
+                1.  export default all...cadastrar varios linsteners.
+                2.  takeLatest = ultimo click, takeEvery = todos os clicks rapidos serão considerados.
+                3.  takeLatest -> 2 parametros: action a ouvir, action a disparar.
+    3.  Configurar o saga dentro do redux
+        1.  Criar modules/rootSaga.js
+            1.  vai juntar todas as Sagas em 1 arquivo (como rootReducer).
+        2.  atualizar store/index.js
+
+20.  Reactotron + Saga
+    1.  plugins no Reactotron.
+        ```
+        yarn add reactotron-redux-saga
+        ```
+    2.  config/ReactotronConfig.js: import reactotronSaga from 'reactotron-redux-saga';
+    3.  store/index.js: criar sagaMonitor
+
+21. Separando actions
+    1.  cart/reducer.js: alterar ADD_SUCCUESS
+        1. apenas: draft.push(product); o resto acontece no sagas.
+    2.  cart/sagas.js:
+        1.  adicionar const data com as informações de reducer.
+        2.  Não duplicar o produto:
+            1.  import {  select } from 'redux-saga/effects';
+            2.  const productExists = yield select...
+
+22. Estoque na adição
+    1.  cart/sagas.js
+
 
 
