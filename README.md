@@ -3,19 +3,31 @@
 2. Utilização de ambiente Android.
 3. Incluir ESLint, Prettier & EditorConfig.
 
-4. Redux.
-5. Navegação entre páginas: React Navigation.
-6. Estilização via Styled Components.
-7. Acessando dados de API do Github.
-8. Acessando localstorage do Google Chrome.
+1.  Redux.
+2.  Usando API através de JSON Server e Axios.
+3.  Formatação de preço (R$).
+4.  Configurçaõ de Redux e integração com React.
+5.  Criação de store com { createStore } from 'redux'.
+6.  Reducers (vide 10. Adicionando ao Carrinho):
+    1.  **dispatch action, reducers, State**
+7.  Reactotron + Redux
+8.  mapStatetoProps e mapDispatchToProps.
+9.  immer para tratar de produtos duplicados.
+10. Refatorando actions.
+11. Configurando **Redux Saga**
+    1.  Middlewares p/ sideEffects.
+    2. Separar actions em 2 Ex. **addToCartRequest e addToCartSuccess**
+12. Produto vs. Estoque e mensagens de ERRO via React Toastify.
 ___
 
 ### Desrição do projeto:
 
+Um website 'Rocketshoes', que tem uma lista de produtos (tênis). O site permite adicionar os produtos ao 'Carrinho'. Na página do Carrinho,  podemos alterar a quantidade de cada produto, remover o produto e temos o retorno do valor subtotal e total de produtos em R$.
+
 ### Iniciando o projeto:
 
-1. yarn start
-2. json-server server.json -p 3333
+1.  json-server server.json -p 3333
+2.  yarn start
 
 ### Criando o projeto:
 
@@ -327,11 +339,52 @@ ___
     2.  cart/sagas.js:
         1.  adicionar const data com as informações de reducer.
         2.  Não duplicar o produto:
-            1.  import {  select } from 'redux-saga/effects';
+            1.  import {  select } from 'redux-saga/effects'; buscar informações dentro do state.
             2.  const productExists = yield select...
 
 22. Estoque na adição
-    1.  cart/sagas.js
+    1.  cart/sagas.js:
+        1.  Criar const stock
+        2.  ...
+            ```Javascript
+            if (amount > stockAmount) {
+              console.tron.warn('ERRO');
+              return; }
+            ```
+
+23. React Toastify
+    1.  Mensagem de ERRO. p/ front user.
+    2.  src/App.js: import { ToastContainer } from 'react-toastify'; adicionar ToastContainer />
+    3.  src/styles/global.js: import 'react-toastify/dist/ReactToastify.css';
+    4.  modules/cart/sagas.js: add toast.error('Quantidade solicitada fora de estoque');
+
+24. Estoque na alteração ( quantidade)
+    1.  modules/cart/actions.js
+        1.  separar updateAmount em 2 (sempre que for trabalhar com Saga)
+            1.  updateAmountRequest(id, amount)
+            2.  updateAmountSuccess(id, amount)
+    2.  pages/Cart/index.js
+        1.  Alterar occurences: updateAmount para updateAmountRequest.
+    3.  modules/cart/sagas.js
+        1.  Alterar all occurences: updateAmount para updateAmountSuccess.
+
+25. Navegação de página dentro do Saga **(Funcionalidade excluída do projeto)**
+    1.  Ao clicar em "Adicionar ao Carrinho", ir direto a pagina /Cart.
+    2.  Poŕem, a navegação acontece depois de um dispatch do Saga, portanto vamos ter que fazer a navegação via Saga. Obs. javascript nao sabe que o saga esta sendo executado, portanto pode acontecer a mudança de pagina antes da adição ao carrinho.
+
+    3.  ```
+        yarn add history
+        ```
+    4.  Criar services/history.js
+    5.  src/App.js:
+        1.  import history from './services/history'; import { Router } from 'react-router-dom';
+        2.  Router history={history}>
+    6.  cart/sagas.js:  incluir history.push
+    7.  teste: adicionar ao carrinho direciona a pagina do carrinho.
+        1.  colocar um delay no carregamento, Terminal:
+        ```
+        json-server server.json -p 3333 -d 2000
+        ```
 
 
 
