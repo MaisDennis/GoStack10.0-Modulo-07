@@ -1,7 +1,4 @@
 ### Conceitos abordados:
-1. Iniciar um projeto React Native para mobile app.
-2. Utilização de ambiente Android.
-3. Incluir ESLint, Prettier & EditorConfig.
 
 1.  Redux.
 2.  Usando API através de JSON Server e Axios.
