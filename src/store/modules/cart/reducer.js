@@ -1,7 +1,7 @@
 import produce from 'immer'; // lidar com objects e arrays imutaveis.
 
 export default function cart(state = [], action) {
-  console.log(state);
+  // console.log(state);
   switch (action.type) {
     case '@cart/ADD_SUCCESS':
       /*

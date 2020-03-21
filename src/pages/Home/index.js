@@ -16,10 +16,12 @@ import * as CartActions from '../../store/modules/cart/actions';
 
 async componentDidMount() {
   const response = await api.get('products');
+  // console.log(response);
   const data = response.data.map(product => ({
     ...product,
     priceFormatted: formatPrice(product.price),
   }));
+  // console.log(data);
   this.setState({ products: data });
 }
 

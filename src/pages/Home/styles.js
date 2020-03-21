@@ -49,7 +49,7 @@ export const ProductList = styled.ul`
         background: rgba(0, 0, 0, 0.1);
         svg {
           margin-right: 5px;
-          text-align: ;
+
         }
       }
       span {

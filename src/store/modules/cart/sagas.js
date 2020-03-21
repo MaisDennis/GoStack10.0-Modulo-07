@@ -36,6 +36,7 @@ function* addToCart({ id }) {
 
     yield put(addToCartSuccess(data));
 
+    // tirando a ultima aula do projeto:
     // history.push('/cart');
   };
 

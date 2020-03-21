@@ -1,10 +1,17 @@
-### Conceitos abordados:
+# GoStack 10.0 || Módulo 07
+
+* [1. Conceitos abordados](#1-conceitos-abordados)
+* [2. Descrição do projeto](#2-descrição-do-projeto)
+* [3. Iniciando o Projeto](#3-iniciando-o-projeto)
+* [4. Criando o projeto](#4-criando-o-projeto)
+
+## 1. Conceitos abordados
 
 1.  Redux.
 2.  Usando API através de JSON Server e Axios.
 3.  Formatação de preço (R$).
-4.  Configurçaõ de Redux e integração com React.
-5.  Criação de store com { createStore } from 'redux'.
+4.  Configurção de Redux e integração com React.
+5.  Criação de store com: { createStore } from 'redux'.
 6.  Reducers (vide 10. Adicionando ao Carrinho):
     1.  **dispatch action, reducers, State**
 7.  Reactotron + Redux
@@ -15,18 +22,28 @@
     1.  Middlewares p/ sideEffects.
     2. Separar actions em 2 Ex. **addToCartRequest e addToCartSuccess**
 12. Produto vs. Estoque e mensagens de ERRO via React Toastify.
-___
 
-### Desrição do projeto:
+## 2. Desrição do projeto
 
 Um website 'Rocketshoes', que tem uma lista de produtos (tênis). O site permite adicionar os produtos ao 'Carrinho'. Na página do Carrinho,  podemos alterar a quantidade de cada produto, remover o produto e temos o retorno do valor subtotal e total de produtos em R$.
 
-### Iniciando o projeto:
+### Main
+<img src="https://github.com/MaisDennis/GoStack10.0-Modulo-07/blob/master/src/assets/Main.png" alt="Main" width="100%" height="auto">
 
-1.  json-server server.json -p 3333
-2.  yarn start
+### Carrinho
+<img src="https://github.com/MaisDennis/GoStack10.0-Modulo-07/blob/master/src/assets/Cart.png" alt="Cart" width="100%" height="auto">
 
-### Criando o projeto:
+## 3. Iniciando o projeto
+
+1.  Iniciar a biblioteca JSON Server:
+```
+json-server server.json -p 3333
+```
+2.  Iiciar o React
+```
+yarn start
+```
+## 4. Criando o projeto
 
 1. Criando o projeto do zero.
    1. Terminal:
