@@ -39,7 +39,7 @@ Um website 'Rocketshoes', que tem uma lista de produtos (tênis). O site permite
 ```
 json-server server.json -p 3333
 ```
-2.  Iiciar o React
+2.  Iniciar o React
 ```
 yarn start
 ```
